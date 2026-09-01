@@ -1,0 +1,28 @@
+<div class="manager-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="logo">SL</span>
+      <div>
+        <strong>SmartLogix</strong>
+        <small>Espace Manager</small>
+      </div>
+    </div>
+    <nav>
+      <a *ngFor="let item of nav"
+         [routerLink]="item.path"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: item.path === 'dashboard' }">
+        <span class="icon">{{ item.abbr }}</span>
+        {{ item.label }}
+      </a>
+    </nav>
+    <div class="footer" *ngIf="auth.getCurrentUser() as user">
+      <div class="user">{{ user.firstName }} {{ user.lastName }}</div>
+      <button class="btn btn-outline btn-sm" (click)="logout()">Déconnexion</button>
+    </div>
+  </aside>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <app-chat-widget></app-chat-widget>
+</div>

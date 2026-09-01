@@ -1,0 +1,58 @@
+<div class="page">
+  <h1>Mon profil</h1>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Informations personnelles</h2>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="field">
+          <label>Prénom</label>
+          <input formControlName="firstName" />
+        </div>
+        <div class="field">
+          <label>Nom</label>
+          <input formControlName="lastName" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input [value]="user?.email" disabled />
+        </div>
+        <div class="field">
+          <label>Téléphone</label>
+          <input formControlName="phone" />
+        </div>
+        <div class="field">
+          <label>Rôle</label>
+          <input [value]="user?.role" disabled />
+        </div>
+        <div class="field">
+          <label>Statut</label>
+          <input [value]="user?.active ? 'Actif' : 'Inactif'" disabled />
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">Enregistrer</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Changer le mot de passe</h2>
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <div class="field">
+          <label>Mot de passe actuel</label>
+          <input type="password" formControlName="currentPassword" />
+        </div>
+        <div class="field">
+          <label>Nouveau mot de passe</label>
+          <input type="password" formControlName="newPassword" />
+        </div>
+        <div class="field">
+          <label>Confirmer</label>
+          <input type="password" formControlName="confirmPassword" />
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid">Modifier</button>
+      </form>
+    </div>
+  </div>
+
+  <p class="success" *ngIf="message">{{ message }}</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+</div>

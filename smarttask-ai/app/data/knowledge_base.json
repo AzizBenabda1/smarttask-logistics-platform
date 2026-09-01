@@ -1,0 +1,52 @@
+{
+  "domain": "SmartTask — Plateforme logistique de livraison",
+  "allowed_topics": [
+    "tâches et livraisons",
+    "commandes clients",
+    "chauffeurs et assignation",
+    "retards et deadlines",
+    "incidents",
+    "notifications",
+    "SmartTask AI et prédictions",
+    "statuts et workflow",
+    "performance et analytics"
+  ],
+  "workflows": {
+    "order_lifecycle": "PENDING → VERIFIED → PREPARED → (tâche créée) → ASSIGNED → IN_PROGRESS → IN_DELIVERY → COMPLETED",
+    "task_lifecycle": "PENDING → ASSIGNED → IN_PROGRESS → IN_DELIVERY → COMPLETED (ou DELAYED / CANCELLED)",
+    "roles": {
+      "MANAGER": "Supervise les opérations, assigne les tâches, utilise l'IA, consulte analytics",
+      "OPERATOR": "Valide les commandes, prépare les livraisons, suit le suivi",
+      "DRIVER": "Exécute les missions, signale les incidents, met à jour le statut",
+      "CLIENT": "Passe des commandes, suit la livraison, confirme réception, évalue",
+      "ADMIN": "Gère les utilisateurs et la configuration système"
+    }
+  },
+  "faq": [
+    {
+      "keywords": ["retard", "delayed", "en retard"],
+      "answer": "Une tâche est marquée DELAYED lorsque la deadline est dépassée sans livraison terminée. Le scheduler SmartTask vérifie toutes les 5 minutes. L'IA peut aussi prédire le risque de retard avant qu'il ne se produise."
+    },
+    {
+      "keywords": ["assigner", "assignation", "chauffeur"],
+      "answer": "Pour assigner un chauffeur : ouvrez Gestion des tâches, sélectionnez un chauffeur ou utilisez 'IA Assign' pour la recommandation SmartTask AI basée sur disponibilité, zone, charge et performance."
+    },
+    {
+      "keywords": ["confirmer", "réception", "reception"],
+      "answer": "Le client confirme la réception depuis la page Suivi livraison une fois le statut DELIVERED/COMPLETED. Cela met à jour la commande et permet de laisser une évaluation."
+    },
+    {
+      "keywords": ["incident", "problème", "signaler"],
+      "answer": "Les chauffeurs et clients peuvent signaler un incident (panne, embouteillage, adresse incorrecte, client absent). Le manager est notifié et peut réassigner la tâche."
+    },
+    {
+      "keywords": ["ia", "intelligence", "prédiction", "prediction", "analyser"],
+      "answer": "SmartTask AI analyse le risque de retard, estime le temps de livraison et recommande le meilleur chauffeur. Les modèles ML sont delay_model (Logistic Regression) et delivery_time_model (XGBoost)."
+    },
+    {
+      "keywords": ["statut", "status", "pending", "completed"],
+      "answer": "Statuts tâche : PENDING, ASSIGNED, IN_PROGRESS, IN_DELIVERY, COMPLETED, CANCELLED, DELAYED. Statuts commande : PENDING, VERIFIED, PREPARED, SHIPPED, DELIVERED, RECEIVED, CANCELLED."
+    }
+  ],
+  "off_topic_response": "Je suis SmartTask Copilot, votre assistant logistique. Je réponds uniquement aux questions sur vos livraisons, commandes, tâches, chauffeurs, retards, incidents et l'IA SmartTask. Reformulez votre question dans ce contexte."
+}

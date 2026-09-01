@@ -1,0 +1,60 @@
+<div class="copilot-root">
+  <button type="button" class="copilot-fab" (click)="toggle()" [class.open]="open" aria-label="SmartTask Copilot">
+    <span class="fab-icon" *ngIf="!open">AI</span>
+    <span class="fab-icon" *ngIf="open">×</span>
+  </button>
+
+  <div class="copilot-panel" *ngIf="open">
+    <div class="copilot-header">
+      <div>
+        <strong>SmartTask Copilot</strong>
+        <small>Assistant logistique · contexte SmartTask uniquement</small>
+      </div>
+      <button type="button" class="btn-close" (click)="open = false">×</button>
+    </div>
+
+    <div class="copilot-messages" #scrollArea>
+      <div *ngIf="loading" class="copilot-loading">Chargement...</div>
+
+      <div *ngFor="let m of messages" class="msg-row" [class.user]="m.role === 'USER'" [class.bot]="m.role === 'ASSISTANT'">
+        <div class="msg-bubble">
+          <div [innerHTML]="formatContent(m.content)"></div>
+          <div class="msg-meta" *ngIf="m.intent && m.role === 'ASSISTANT'">
+            <span class="intent-chip">{{ m.intent }}</span>
+          </div>
+          <div class="msg-sources" *ngIf="m.sources?.length && m.role === 'ASSISTANT'">
+            <span *ngFor="let s of m.sources" class="source-tag">{{ s }}</span>
+          </div>
+          <div class="msg-actions" *ngIf="m.actions?.length">
+            <button type="button" class="action-btn" *ngFor="let a of m.actions" (click)="runAction(a)">
+              {{ a.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="sending" class="msg-row bot">
+        <div class="msg-bubble typing">Copilot réfléchit...</div>
+      </div>
+    </div>
+
+    <div class="copilot-suggestions" *ngIf="suggestions.length">
+      <button type="button" class="suggestion-chip" *ngFor="let s of suggestions" (click)="useSuggestion(s)">
+        {{ s }}
+      </button>
+    </div>
+
+    <div class="copilot-input">
+      <input
+        type="text"
+        [(ngModel)]="input"
+        (keyup.enter)="send()"
+        placeholder="Posez une question sur SmartTask..."
+        [disabled]="sending"
+      />
+      <button type="button" class="send-btn" (click)="send()" [disabled]="sending || !input.trim()">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>

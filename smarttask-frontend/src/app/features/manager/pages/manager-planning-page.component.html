@@ -1,0 +1,24 @@
+<div class="page">
+  <div class="header">
+    <div><h1>Planning</h1><p>Vue calendaire des livraisons planifiées</p></div>
+    <input type="date" [(ngModel)]="selectedDate" (change)="load()" />
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Heure</th><th>Tâche</th><th>Client</th><th>Chauffeur</th><th>Zone</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let t of tasks">
+            <td>{{ t.scheduledTime || '—' }}</td>
+            <td>{{ t.title }}</td>
+            <td>{{ t.clientName }}</td>
+            <td>{{ t.driverName || 'Non assigné' }}</td>
+            <td>{{ t.zone || '—' }}</td>
+            <td><span class="badge" [ngClass]="t.status">{{ t.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!tasks.length" class="empty">Aucune livraison pour cette date</div>
+    </div>
+  </div>
+</div>

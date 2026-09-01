@@ -1,0 +1,98 @@
+<div class="page">
+  <div class="header">
+    <h1>Gestion des utilisateurs</h1>
+    <button class="btn btn-primary" (click)="openCreate()">+ Ajouter</button>
+  </div>
+
+  <div class="filters">
+    <input type="text" [(ngModel)]="search" placeholder="Rechercher..." (keyup.enter)="loadUsers()" />
+    <select [(ngModel)]="filterRole" (change)="loadUsers()">
+      <option value="">Tous les rôles</option>
+      <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+    </select>
+    <button class="btn btn-outline" (click)="loadUsers()">Filtrer</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Prénom</th>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.firstName }}</td>
+          <td>{{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone || '—' }}</td>
+          <td>
+            <select [value]="user.role" (change)="changeRole(user, $any($event.target).value)">
+              <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+            </select>
+          </td>
+          <td>
+            <span class="status" [class.active]="user.active">
+              {{ user.active ? 'Actif' : 'Inactif' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-sm" (click)="openEdit(user)">Edit</button>
+            <button class="btn-sm" (click)="toggleStatus(user)">
+              {{ user.active ? 'Disable' : 'Activate' }}
+            </button>
+            <button class="btn-sm danger" (click)="deleteUser(user)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-content">
+      <h2>{{ editingUser ? 'Modifier' : 'Nouvel' }} utilisateur</h2>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="field">
+          <label>Prénom</label>
+          <input formControlName="firstName" />
+        </div>
+        <div class="field">
+          <label>Nom</label>
+          <input formControlName="lastName" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input formControlName="email" type="email" />
+        </div>
+        <div class="field">
+          <label>Mot de passe {{ editingUser ? '(laisser vide pour ne pas changer)' : '' }}</label>
+          <input formControlName="password" type="password" />
+        </div>
+        <div class="field">
+          <label>Téléphone</label>
+          <input formControlName="phone" />
+        </div>
+        <div class="field">
+          <label>Rôle</label>
+          <select formControlName="role">
+            <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+          </select>
+        </div>
+        <div class="field checkbox">
+          <label><input type="checkbox" formControlName="active" /> Actif</label>
+        </div>
+        <p class="error" *ngIf="error">{{ error }}</p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" (click)="closeForm()">Annuler</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

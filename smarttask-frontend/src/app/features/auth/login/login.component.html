@@ -1,0 +1,38 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-logo">SL</span>
+      <div>
+        <h1>SmartLogix</h1>
+        <p class="tagline">Plateforme logistique intelligente</p>
+      </div>
+    </div>
+    <p class="subtitle">Connectez-vous à votre espace</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="user@email.com" />
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+      </div>
+
+      <div class="login-alert error" *ngIf="error">
+        <span class="alert-icon">!</span>
+        <span>{{ error }}</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">
+        {{ loading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <div class="login-features">
+      <span class="feature-chip">Dashboards</span>
+      <span class="feature-chip ai">IA livraison</span>
+      <span class="feature-chip">Alertes temps réel</span>
+    </div>
+  </div>
+</div>

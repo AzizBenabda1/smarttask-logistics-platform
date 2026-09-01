@@ -1,0 +1,110 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>SmartLogix AI</h1>
+      <p class="subtitle">Predictions ML, reussite livraison et recommandations chauffeur</p>
+    </div>
+    <div class="page-actions">
+      <app-view-toggle [mode]="viewMode" (modeChange)="viewMode = $event"></app-view-toggle>
+    </div>
+  </div>
+
+  <app-alert-banner *ngIf="aiError" type="error" title="Service IA" [message]="aiError" (dismissed)="aiError = ''"></app-alert-banner>
+
+  <div class="card" *ngIf="modelStatus as ms">
+    <div class="card-header">
+      <h2>Etat des modeles ML</h2>
+      <span class="badge badge-ai">Python 8000</span>
+    </div>
+    <div class="card-body">
+      <div class="stat-grid" style="margin-bottom:0">
+        <div class="stat-card stat-ai">
+          <div class="stat-label">Retard</div>
+          <div class="stat-value" style="font-size:1.125rem">{{ ms.delayModel }}</div>
+        </div>
+        <div class="stat-card stat-ai">
+          <div class="stat-label">Temps livraison</div>
+          <div class="stat-value" style="font-size:1.125rem">{{ ms.deliveryTimeModel }}</div>
+        </div>
+        <div class="stat-card stat-ai">
+          <div class="stat-label">Reussite livraison</div>
+          <div class="stat-value" style="font-size:1.125rem">{{ ms.deliverySuccessModel || 'not_found' }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Priorite</div>
+          <div class="stat-value" style="font-size:1.125rem">{{ ms.priorityModel }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="skeleton-grid">
+    <div class="skeleton-block" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <div class="card" *ngIf="!loading">
+    <div class="card-header">
+      <h2>Recommandations d'assignation</h2>
+      <span class="badge badge-neutral">{{ recommendations.length }} resultat(s)</span>
+    </div>
+    <div class="card-body">
+      <!-- Vue cartes -->
+      <div class="card-grid" *ngIf="viewMode === 'cards' && recommendations.length">
+        <div class="tile-card" *ngFor="let r of recommendations">
+          <div class="tile-header">
+            <div>
+              <h3 class="tile-title">Tache #{{ r.taskId }}</h3>
+              <p class="tile-subtitle">{{ r.recommendedDriverName }}</p>
+            </div>
+            <span class="ai-score"
+                  [class.risk-low]="r.scorePercent >= 70"
+                  [class.risk-medium]="r.scorePercent >= 40 && r.scorePercent < 70"
+                  [class.risk-high]="r.scorePercent < 40">
+              {{ r.scorePercent }}%
+            </span>
+          </div>
+          <div class="tile-body">
+            <ul class="ai-reasons">
+              <li *ngFor="let reason of r.reasons">{{ reason }}</li>
+            </ul>
+          </div>
+          <div class="tile-footer">
+            <button class="btn-sm btn-ai" (click)="assignDirect(r)">Accepter</button>
+            <button class="btn-sm" (click)="refresh(r.taskId)">Recalculer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue liste -->
+      <div class="table-wrap" *ngIf="viewMode === 'list' && recommendations.length">
+        <table class="data-table">
+          <thead>
+            <tr><th>Tache</th><th>Chauffeur</th><th>Score</th><th>Raisons</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of recommendations">
+              <td>#{{ r.taskId }}</td>
+              <td>{{ r.recommendedDriverName }}</td>
+              <td><strong>{{ r.scorePercent }}%</strong></td>
+              <td>{{ r.reasons.join(' · ') }}</td>
+              <td>
+                <button class="btn-sm btn-ai" (click)="assignDirect(r)">Accepter</button>
+                <button class="btn-sm" (click)="refresh(r.taskId)">Recalculer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="!recommendations.length">
+        <p class="empty-title">Aucune recommandation</p>
+        <p>Consultez la page Taches pour analyser une mission ou le score reussite livraison.</p>
+      </div>
+
+      <p class="text-muted mt-2" style="font-size:0.8125rem" *ngIf="recommendations.length">
+        {{ recommendations[0].disclaimer }}
+        <span *ngIf="recommendations[0].ruleBased"> (fallback rule-based)</span>
+      </p>
+    </div>
+  </div>
+</div>

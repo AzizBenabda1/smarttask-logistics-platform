@@ -1,0 +1,102 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>IA Automation</h1>
+      <p class="subtitle">Chaîne 1 — Livraison Express Autonome (7 instructions sans humain)</p>
+    </div>
+  </div>
+
+  <div class="stat-grid" *ngIf="status">
+    <div class="stat-card" [class.stat-success]="status.expressEnabled" [class.stat-warning]="!status.expressEnabled">
+      <div class="stat-label">Chaîne express</div>
+      <div class="stat-value">{{ status.expressEnabled ? 'ACTIVE' : 'OFF' }}</div>
+      <div class="stat-hint">Auto si priorité {{ status.autoTriggerPriorities }}</div>
+    </div>
+    <div class="stat-card stat-ai">
+      <div class="stat-label">Seuil chauffeur IA</div>
+      <div class="stat-value">{{ status.minDriverScore }}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Instructions</div>
+      <div class="stat-value">{{ status.stepCount }}</div>
+    </div>
+  </div>
+
+  <div class="card mb-2">
+    <div class="card-header"><h2>Les 7 instructions IA</h2></div>
+    <div class="card-body">
+      <div class="list-cards">
+        <div class="list-card" *ngFor="let s of chainSteps">
+          <div class="list-card-row">
+            <div class="list-card-main">
+              <h3 class="list-card-title">{{ s.n }}. {{ s.label }}</h3>
+              <p class="list-card-meta">{{ s.name }}</p>
+            </div>
+            <span class="badge badge-ai">IA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-2">
+    <div class="card-header"><h2>Lancer manuellement</h2></div>
+    <div class="card-body">
+      <div class="filter-bar" style="margin-bottom:0">
+        <div class="form-field">
+          <label>ID commande</label>
+          <input type="number" [(ngModel)]="orderIdInput" placeholder="ex. 1" />
+        </div>
+        <button class="btn btn-primary" (click)="runManual()" [disabled]="loading || !orderIdInput">
+          {{ loading ? 'Exécution...' : 'Exécuter la chaîne' }}
+        </button>
+      </div>
+      <p class="alert alert-error mt-2" *ngIf="error">{{ error }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-2" *ngIf="lastResult">
+    <div class="card-header">
+      <h2>Dernière exécution</h2>
+      <span class="badge" [class.badge-success]="lastResult.success" [class.badge-warning]="!lastResult.success">
+        {{ lastResult.success ? 'SUCCÈS' : 'PARTIEL' }}
+      </span>
+    </div>
+    <div class="card-body">
+      <p>{{ lastResult.summary }}</p>
+      <div class="list-cards mt-2">
+        <div class="list-card" *ngFor="let step of lastResult.steps">
+          <div class="list-card-row">
+            <div class="list-card-main">
+              <h3 class="list-card-title">#{{ step.stepNumber }} {{ step.stepName }}</h3>
+              <p class="list-card-meta">{{ step.message }}</p>
+            </div>
+            <span class="badge" [ngClass]="{
+              'badge-success': step.status === 'SUCCESS',
+              'badge-warning': step.status === 'SKIPPED',
+              'badge-danger': step.status === 'FAILED'
+            }">{{ step.status }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Journal automation</h2></div>
+    <div class="card-body">
+      <div class="list-cards" *ngIf="logs.length; else noLogs">
+        <div class="list-card" *ngFor="let log of logs">
+          <div class="list-card-row">
+            <div class="list-card-main">
+              <h3 class="list-card-title">Run {{ log.runId | slice:0:8 }} — #{{ log.stepNumber }} {{ log.stepName }}</h3>
+              <p class="list-card-meta">Commande #{{ log.orderId }} · {{ log.message }}</p>
+            </div>
+            <span class="badge badge-neutral">{{ log.status }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-template #noLogs><div class="empty-state"><p>Aucune exécution enregistrée</p></div></ng-template>
+    </div>
+  </div>
+</div>

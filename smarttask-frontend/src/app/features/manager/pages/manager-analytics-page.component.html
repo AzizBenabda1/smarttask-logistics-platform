@@ -1,0 +1,39 @@
+<div class="page">
+  <div class="header">
+    <div><h1>Analytique</h1><p>Indicateurs de performance logistique</p></div>
+    <button class="btn btn-primary btn-sm" (click)="exportCsv()">Exporter CSV</button>
+  </div>
+  <ng-container *ngIf="data as d">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">Total livraisons</div><div class="value">{{ d.totalDeliveries }}</div></div>
+      <div class="kpi ok"><div class="label">Terminées</div><div class="value">{{ d.completedDeliveries }}</div></div>
+      <div class="kpi ok"><div class="label">À l'heure</div><div class="value">{{ d.onTimeDeliveries }}</div></div>
+      <div class="kpi warn"><div class="label">Retardées</div><div class="value">{{ d.delayedDeliveries }}</div></div>
+      <div class="kpi"><div class="label">Durée moy. (min)</div><div class="value">{{ d.averageDeliveryMinutes | number:'1.0-0' }}</div></div>
+      <div class="kpi"><div class="label">Performance moy.</div><div class="value">{{ d.averagePerformance | number:'1.0-0' }}%</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Livraisons par jour</h2>
+        <div class="bar-chart">
+          <div class="bar-row" *ngFor="let p of d.deliveriesByDay">
+            <span>{{ p.label }}</span>
+            <div class="track"><div class="fill" [style.width.%]="barWidth(p, d.deliveriesByDay)"></div></div>
+            <strong>{{ p.value }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Par priorité</h2>
+        <div class="bar-chart">
+          <div class="bar-row" *ngFor="let p of d.tasksByPriority">
+            <span>{{ p.label }}</span>
+            <div class="track"><div class="fill" [style.width.%]="barWidth(p, d.tasksByPriority)"></div></div>
+            <strong>{{ p.value }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div *ngIf="!data" class="empty">Chargement...</div>
+</div>

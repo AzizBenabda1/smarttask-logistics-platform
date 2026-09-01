@@ -1,0 +1,85 @@
+@import './app/shared/styles/design-tokens.scss';
+@import './app/features/manager/manager-shared.scss';
+@import './app/shared/styles/role-layout.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--st-bg);
+  color: var(--st-text);
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+a {
+  color: var(--st-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--st-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--st-primary);
+  color: #fff;
+  box-shadow: var(--st-shadow-sm);
+
+  &:hover:not(:disabled) {
+    background: var(--st-primary-hover);
+    box-shadow: var(--st-shadow);
+  }
+}
+
+.btn-secondary {
+  background: var(--st-bg-elevated);
+  color: var(--st-text-secondary);
+  border-color: var(--st-border-strong);
+
+  &:hover:not(:disabled) {
+    background: var(--st-bg);
+    border-color: var(--st-primary);
+    color: var(--st-primary);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--st-sidebar-text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  &:hover:not(:disabled) {
+    background: var(--st-sidebar-hover);
+    color: #fff;
+  }
+}

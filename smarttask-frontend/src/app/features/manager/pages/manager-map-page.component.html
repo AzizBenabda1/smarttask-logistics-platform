@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="header"><div><h1>Carte & zones</h1><p>Répartition géographique des livraisons actives</p></div></div>
+  <div class="grid-2">
+    <div class="card map-shell">
+      <h2>Carte (aperçu)</h2>
+      <div class="map-placeholder">
+        <div class="gps-dot" *ngFor="let t of gpsTasks" [style.left.%]="gpsLeft(t)" [style.top.%]="gpsTop(t)" [title]="t.title">
+          🚚
+        </div>
+        <div class="zone-dot" *ngFor="let z of zones" [style.left.%]="20 + zones.indexOf(z) * 15" [style.top.%]="30 + zones.indexOf(z) * 10">
+          <span>{{ z.name }}</span>
+          <small>{{ z.count }}</small>
+        </div>
+        <p class="map-note">GPS live ({{ gpsTasks.length }} positions) — rafraîchi toutes les 30s</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Livraisons par zone</h2>
+      <div class="bar-chart">
+        <div class="bar-row" *ngFor="let z of zones">
+          <span>{{ z.name }}</span>
+          <div class="track"><div class="fill" [style.width.%]="z.count * 20"></div></div>
+          <strong>{{ z.count }}</strong>
+        </div>
+      </div>
+      <div *ngIf="!zones.length" class="empty">Aucune zone active</div>
+    </div>
+  </div>
+  <div class="card table-wrap">
+    <h2>Missions en cours</h2>
+    <table>
+      <thead><tr><th>Tâche</th><th>Adresse</th><th>Zone</th><th>Chauffeur</th><th>GPS</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let t of tasks"><td>{{ t.title }}</td><td>{{ t.deliveryAddress }}</td><td>{{ t.zone }}</td><td>{{ t.driverName || '—' }}</td>
+        <td>{{ t.latitude ? (t.latitude + ', ' + t.longitude) : '—' }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<style>
+.map-shell { min-height: 320px; }
+.map-placeholder {
+  position: relative; height: 260px; background: linear-gradient(135deg,#dbeafe,#e0e7ff);
+  border-radius: 8px; border: 1px dashed #93c5fd;
+}
+.zone-dot {
+  position: absolute; background: #2563eb; color: #fff; padding: .4rem .6rem; border-radius: 8px;
+  font-size: .75rem; text-align: center; box-shadow: 0 2px 8px rgba(37,99,235,.3);
+  span { display: block; font-weight: 600; }
+}
+.gps-dot {
+  position: absolute; font-size: 1.25rem; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+}
+.map-note { position: absolute; bottom: .75rem; left: .75rem; font-size: .75rem; color: #64748b; margin: 0; }
+</style>

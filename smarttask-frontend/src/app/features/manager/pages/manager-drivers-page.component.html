@@ -1,0 +1,26 @@
+<div class="page">
+  <div class="header"><div><h1>Chauffeurs</h1><p>État et performance de la flotte</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi ok"><div class="label">Disponibles</div><div class="value">{{ countByStatus('AVAILABLE') }}</div></div>
+    <div class="kpi"><div class="label">Occupés</div><div class="value">{{ countByStatus('BUSY') }}</div></div>
+    <div class="kpi"><div class="label">Total</div><div class="value">{{ drivers.length }}</div></div>
+  </div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Nom</th><th>Email</th><th>Statut</th><th>Zone</th><th>Charge</th><th>Livraisons</th><th>Performance</th><th>Tâches actives</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let d of drivers">
+          <td>{{ d.firstName }} {{ d.lastName }}</td>
+          <td>{{ d.email }}</td>
+          <td><span class="badge" [ngClass]="d.status">{{ d.status }}</span></td>
+          <td>{{ d.zone || '—' }}</td>
+          <td>{{ d.currentLoad }}</td>
+          <td>{{ d.totalDeliveries }}</td>
+          <td>{{ d.performanceScore }}%</td>
+          <td>{{ d.activeTasks }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!drivers.length" class="empty">Aucun chauffeur</div>
+  </div>
+</div>

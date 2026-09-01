@@ -1,0 +1,247 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Gestion des tâches</h1>
+      <p class="subtitle">Créer, modifier et assigner les livraisons</p>
+    </div>
+    <div class="page-actions">
+      <div class="view-toggle">
+        <button type="button" [class.active]="viewMode === 'cards'" (click)="viewMode = 'cards'">Cartes</button>
+        <button type="button" [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">Liste</button>
+      </div>
+      <button class="btn btn-primary" (click)="openCreate()">Nouvelle tâche</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="form-field">
+      <label>Recherche</label>
+      <input type="text" placeholder="Titre, client, adresse..." [(ngModel)]="filterSearch" (keyup.enter)="loadTasks()" />
+    </div>
+    <div class="form-field">
+      <label>Statut</label>
+      <select [(ngModel)]="filterStatus" (change)="loadTasks()">
+        <option value="">Tous statuts</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+    <button class="btn btn-secondary" (click)="loadTasks()">Filtrer</button>
+    <span class="count">{{ totalElements }} tâche(s)</span>
+  </div>
+
+  <!-- Card view -->
+  <div class="card-grid" *ngIf="viewMode === 'cards'">
+    <div class="tile-card" *ngFor="let t of tasks">
+      <div class="tile-header">
+        <div>
+          <h3 class="tile-title">{{ t.title }}</h3>
+          <p class="tile-subtitle">{{ t.clientName }} · {{ t.deliveryAddress }}</p>
+        </div>
+        <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+      </div>
+      <div class="tile-body">
+        <div class="list-card-details" style="border:none;padding:0">
+          <div class="meta-item">
+            <span class="meta-label">Statut</span>
+            <span class="badge" [ngClass]="t.status">{{ t.status }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Deadline</span>
+            <span class="meta-value">{{ t.deadline | date:'short' }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Chauffeur</span>
+            <span class="meta-value">{{ t.driverName || 'Non assigné' }}</span>
+          </div>
+        </div>
+        <span *ngIf="t.delayed" class="badge badge-danger mt-1">RETARD</span>
+      </div>
+      <div class="tile-footer">
+        <select *ngIf="drivers.length" class="btn-sm" [value]="t.driverId || ''" (change)="assign(t, +$any($event.target).value)">
+          <option value="">Assigner chauffeur</option>
+          <option *ngFor="let d of drivers" [value]="d.id">{{ d.firstName }} {{ d.lastName }}</option>
+        </select>
+        <button class="btn-sm" (click)="openEdit(t)">Modifier</button>
+        <button class="btn-sm btn-ai" (click)="openAiModal(t)">Analyser IA</button>
+        <button class="btn-sm btn-ai" *ngIf="!t.driverId" (click)="assignRecommended(t)">IA Assign</button>
+        <button class="btn-sm" (click)="deleteTask(t)">Supprimer</button>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="!tasks.length" style="grid-column:1/-1">
+      <p class="empty-title">Aucune tâche</p>
+      <p>Créez une nouvelle tâche ou modifiez vos filtres.</p>
+    </div>
+  </div>
+
+  <!-- Table view -->
+  <div class="card table-wrap" *ngIf="viewMode === 'table'">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Titre</th><th>Client</th><th>Chauffeur</th><th>Statut</th><th>Priorité</th><th>Deadline</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tasks">
+          <td>{{ t.title }} <span *ngIf="t.delayed" class="badge DELAYED">RETARD</span></td>
+          <td>{{ t.clientName }}</td>
+          <td>
+            <select *ngIf="drivers.length" [value]="t.driverId || ''" (change)="assign(t, +$any($event.target).value)">
+              <option value="">— Non assigné —</option>
+              <option *ngFor="let d of drivers" [value]="d.id">{{ d.firstName }} {{ d.lastName }}</option>
+            </select>
+          </td>
+          <td>
+            <select [value]="t.status" (change)="changeStatus(t, $any($event.target).value)">
+              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+          </td>
+          <td><span class="badge" [ngClass]="t.priority">{{ t.priority }}</span></td>
+          <td>{{ t.deadline | date:'short' }}</td>
+          <td>
+            <button class="btn-sm" (click)="openEdit(t)">Modifier</button>
+            <button class="btn-sm btn-ai" (click)="openAiModal(t)">Analyser IA</button>
+            <button class="btn-sm" *ngIf="!t.driverId" (click)="assignRecommended(t)">IA Assign</button>
+            <button class="btn-sm" (click)="deleteTask(t)">Suppr.</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!tasks.length" class="empty-state"><p>Aucune tâche</p></div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <span class="pagination-info">Page {{ page + 1 }} sur {{ totalPages }}</span>
+    <div class="pagination-controls">
+      <button class="btn btn-secondary" (click)="prevPage()" [disabled]="page===0">Précédent</button>
+      <button class="btn btn-secondary" (click)="nextPage()" [disabled]="page >= totalPages - 1">Suivant</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showAiModal && aiTask as task" (click)="closeAiModal()">
+  <div class="modal-panel modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>SmartTask AI — Tâche #{{ task.id }}</h2>
+      <button class="btn-sm" (click)="closeAiModal()">Fermer</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-secondary">{{ task.title }} · {{ task.deliveryAddress }}</p>
+
+      <div class="ai-actions" style="margin-top:0">
+        <button class="btn btn-primary btn-ai" (click)="analyzeWithAi()" [disabled]="aiLoading">Analyser le risque</button>
+        <button class="btn btn-secondary btn-ai" (click)="analyzeDeliverySuccess()" [disabled]="aiLoading">Score reussite livraison</button>
+        <button class="btn btn-secondary btn-ai" *ngIf="!task.driverId" (click)="findBestDriver()" [disabled]="aiLoading">Trouver le meilleur chauffeur</button>
+      </div>
+
+      <p *ngIf="aiLoading" class="loading">Analyse en cours...</p>
+      <p class="alert alert-error" *ngIf="aiError">{{ aiError }}</p>
+
+      <div class="ai-panel mt-2" *ngIf="aiAnalysis as a">
+        <div class="ai-panel-title">Résultat analyse</div>
+        <div class="ai-kpi">
+          <div class="ai-kpi-item">
+            <div class="lbl">Risque de retard</div>
+            <div class="val">{{ delayPercent() }}%</div>
+          </div>
+          <div class="ai-kpi-item">
+            <div class="lbl">Niveau</div>
+            <div class="val"><span class="badge" [ngClass]="a.riskLevel">{{ a.riskLevel }}</span></div>
+          </div>
+          <div class="ai-kpi-item">
+            <div class="lbl">Temps estimé</div>
+            <div class="val">{{ a.estimatedDeliveryTimeMinutes }} min</div>
+          </div>
+          <div class="ai-kpi-item" *ngIf="a.priorityScore != null">
+            <div class="lbl">Score priorité</div>
+            <div class="val">{{ a.priorityScore }}</div>
+          </div>
+        </div>
+        <p class="text-muted" style="font-size:0.8125rem" *ngIf="a.delayModelVersion">
+          Modèles v{{ a.delayModelVersion }} / {{ a.deliveryTimeModelVersion }}
+        </p>
+        <strong style="font-size:0.875rem">Explication</strong>
+        <ul class="ai-reasons">
+          <li *ngFor="let r of a.explanation">{{ r }}</li>
+        </ul>
+      </div>
+
+      <div class="ai-panel mt-2" *ngIf="aiDeliverySuccess as ds">
+        <div class="ai-panel-title">Reussite livraison (1er passage)</div>
+        <div class="ai-kpi">
+          <div class="ai-kpi-item">
+            <div class="lbl">Probabilite</div>
+            <div class="val">{{ successPercent() }}%</div>
+          </div>
+          <div class="ai-kpi-item">
+            <div class="lbl">Niveau risque</div>
+            <div class="val"><span class="badge" [ngClass]="ds.riskLevel">{{ ds.riskLevel }}</span></div>
+          </div>
+        </div>
+        <strong style="font-size:0.875rem">Facteurs</strong>
+        <ul class="ai-reasons">
+          <li *ngFor="let f of ds.factors">{{ f }}</li>
+        </ul>
+        <strong style="font-size:0.875rem" *ngIf="ds.suggestedActions?.length">Actions suggerees</strong>
+        <ul class="ai-reasons" *ngIf="ds.suggestedActions?.length">
+          <li *ngFor="let a of ds.suggestedActions">{{ a }}</li>
+        </ul>
+      </div>
+
+      <div class="ai-panel mt-2" *ngIf="aiDriverRec as rec">
+        <div class="ai-panel-title">Chauffeur recommandé</div>
+        <div class="ai-kpi">
+          <div class="ai-kpi-item">
+            <div class="lbl">Chauffeur</div>
+            <div class="val" style="font-size:1rem">{{ driverNameById(rec.recommendedDriverId) }}</div>
+          </div>
+          <div class="ai-kpi-item">
+            <div class="lbl">Score</div>
+            <div class="val">{{ rec.score }}%</div>
+          </div>
+        </div>
+        <ul class="ai-reasons">
+          <li *ngFor="let r of rec.reasons">{{ r }}</li>
+        </ul>
+        <div class="ai-actions">
+          <button class="btn btn-primary btn-ai" (click)="acceptAiDriver()">Accepter la recommandation</button>
+          <button class="btn btn-secondary" (click)="aiDriverRec = null">Choisir manuellement</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showForm" (click)="closeForm()">
+  <div class="modal-panel" (click)="$event.stopPropagation()" [formGroup]="form">
+    <div class="modal-header">
+      <h2>{{ editing ? 'Modifier la tâche' : 'Nouvelle tâche' }}</h2>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-field"><label>Titre *</label><input formControlName="title" /></div>
+        <div class="form-field"><label>Client *</label>
+          <select formControlName="clientId">
+            <option [ngValue]="null">— Choisir —</option>
+            <option *ngFor="let c of clients" [ngValue]="c.id">{{ c.firstName }} {{ c.lastName }}</option>
+          </select>
+        </div>
+        <div class="form-field" style="grid-column:1/-1"><label>Description</label><input formControlName="description" /></div>
+        <div class="form-field" style="grid-column:1/-1"><label>Adresse *</label><input formControlName="deliveryAddress" /></div>
+        <div class="form-field"><label>Zone</label><input formControlName="zone" /></div>
+        <div class="form-field"><label>Deadline *</label><input type="datetime-local" formControlName="deadline" /></div>
+        <div class="form-field"><label>Priorité *</label>
+          <select formControlName="priority">
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Type livraison</label><input formControlName="deliveryType" /></div>
+      </div>
+      <p class="alert alert-error mt-2" *ngIf="error">{{ error }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeForm()">Annuler</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">Enregistrer</button>
+    </div>
+  </div>
+</div>

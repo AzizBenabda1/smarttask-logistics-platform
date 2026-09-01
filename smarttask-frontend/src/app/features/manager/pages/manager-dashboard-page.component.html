@@ -1,0 +1,113 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p class="subtitle">Vue d'ensemble des operations logistiques</p>
+    </div>
+  </div>
+
+  <div class="feature-banner">
+    <p class="feature-banner-title">SmartLogix — Intelligence artificielle</p>
+    <div class="feature-banner-tags">
+      <span class="feature-tag">Delivery Success AI</span>
+      <span class="feature-tag">Automation Express</span>
+      <span class="feature-tag">Route chauffeur</span>
+      <span class="feature-tag">Chatbot Copilot</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="skeleton-grid">
+
+  <ng-container *ngIf="data as d">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total tâches</div>
+        <div class="stat-value">{{ d.totalTasks }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En attente</div>
+        <div class="stat-value">{{ d.pendingTasks }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">En cours</div>
+        <div class="stat-value">{{ d.inProgressTasks }}</div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Terminées</div>
+        <div class="stat-value">{{ d.completedTasks }}</div>
+      </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Retardées</div>
+        <div class="stat-value">{{ d.delayedTasks }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Livraisons aujourd'hui</div>
+        <div class="stat-value">{{ d.deliveriesToday }}</div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Chauffeurs dispo</div>
+        <div class="stat-value">{{ d.availableDrivers }}/{{ d.totalDrivers }}</div>
+      </div>
+      <div class="stat-card stat-ai">
+        <div class="stat-label">Taux à l'heure</div>
+        <div class="stat-value">{{ d.onTimeRate | number:'1.0-0' }}%</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><h2>Tâches par statut</h2></div>
+        <div class="card-body">
+          <div class="bar-chart">
+            <div class="bar-row" *ngFor="let p of d.tasksByStatus">
+              <span>{{ p.label }}</span>
+              <div class="track"><div class="fill" [style.width.%]="barWidth(p, d.tasksByStatus)"></div></div>
+              <strong>{{ p.value }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Alertes récentes</h2></div>
+        <div class="card-body">
+          <div class="alert-list" *ngIf="d.alerts.length; else noAlerts">
+            <div class="alert-item unread" *ngFor="let a of d.alerts">
+              <div class="title">{{ a.title }}</div>
+              <div class="msg">{{ a.message }}</div>
+            </div>
+          </div>
+          <ng-template #noAlerts><div class="empty-state"><p>Aucune alerte</p></div></ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="d.aiRecommendations.length">
+      <div class="card-header">
+        <h2>SmartTask AI — Recommandations</h2>
+        <span class="badge badge-ai">IA</span>
+      </div>
+      <div class="card-body">
+        <div class="list-cards">
+          <div class="list-card" *ngFor="let r of d.aiRecommendations">
+            <div class="list-card-row">
+              <div class="list-card-main">
+                <h3 class="list-card-title">Tâche #{{ r.taskId }}</h3>
+                <p class="list-card-meta">Chauffeur suggéré : {{ r.recommendedDriverName }}</p>
+              </div>
+              <span class="ai-score" [class.risk-low]="r.scorePercent >= 70" [class.risk-medium]="r.scorePercent >= 40 && r.scorePercent < 70" [class.risk-high]="r.scorePercent < 40">
+                Score {{ r.scorePercent }}%
+              </span>
+            </div>
+            <div class="list-card-details">
+              <div class="meta-item">
+                <span class="meta-label">Raisons</span>
+                <span class="meta-value">{{ r.reasons.join(' · ') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="text-muted mt-1" style="font-size:0.8125rem">{{ d.aiRecommendations[0].disclaimer }}</p>
+      </div>
+    </div>
+  </ng-container>
+</div>

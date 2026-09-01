@@ -1,0 +1,193 @@
+/* Role layouts — Manager, Operator, Driver, Client */
+
+.role-layout,
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--st-bg);
+}
+
+.role-sidebar,
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--st-sidebar-bg);
+  color: var(--st-sidebar-text);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-brand,
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--st-radius-sm);
+    background: linear-gradient(135deg, var(--st-primary), var(--st-accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+  }
+
+  strong,
+  .brand-name {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  small,
+  .brand-tag {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--st-accent);
+    margin-top: 0.15rem;
+  }
+}
+
+.sidebar-nav,
+.sidebar nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  overflow-y: auto;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    margin-bottom: 0.25rem;
+    border-radius: var(--st-radius-sm);
+    color: var(--st-sidebar-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: var(--st-sidebar-hover);
+      color: #e2e8f0;
+      text-decoration: none;
+    }
+
+    &.active {
+      background: var(--st-sidebar-active);
+      color: var(--st-sidebar-text-active);
+      box-shadow: inset 3px 0 0 var(--st-accent);
+    }
+  }
+
+  .nav-icon,
+  .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--st-radius-sm);
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--st-accent);
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  a.active .nav-icon,
+  a.active .icon {
+    background: rgba(8, 145, 178, 0.25);
+    color: #67e8f9;
+  }
+}
+
+.sidebar-footer,
+.footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  .user-info,
+  .user {
+    font-size: 0.8125rem;
+    color: var(--st-sidebar-text);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+
+    strong {
+      display: block;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+  }
+
+  .btn-outline {
+    width: 100%;
+  }
+}
+
+.role-main,
+.content,
+.manager-shell .content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: auto;
+  padding: var(--st-page-padding);
+}
+
+.manager-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--st-bg);
+}
+
+.role-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 2rem;
+  background: var(--st-bg-elevated);
+  border-bottom: 1px solid var(--st-border);
+  box-shadow: var(--st-shadow-sm);
+
+  h1 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--st-text);
+  }
+
+  .topbar-meta {
+    font-size: 0.8125rem;
+    color: var(--st-text-muted);
+  }
+}
+
+.role-content {
+  flex: 1;
+  padding: var(--st-page-padding);
+  max-width: 1400px;
+  width: 100%;
+}
+
+:host {
+  display: block;
+}

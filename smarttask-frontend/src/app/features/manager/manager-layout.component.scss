@@ -1,0 +1,13 @@
+.sidebar .btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.sidebar .btn-outline {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}

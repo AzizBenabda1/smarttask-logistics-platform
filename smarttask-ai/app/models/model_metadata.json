@@ -1,0 +1,101 @@
+{
+  "delay_model_version": "1.0.0",
+  "delay_best_algorithm": "logistic_regression",
+  "delay_metrics": {
+    "accuracy": 0.965,
+    "precision": 1.0,
+    "recall": 0.964765100671141,
+    "f1": 0.982066609735269,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        21,
+        575
+      ]
+    ],
+    "roc_auc": 0.9903523489932886
+  },
+  "delay_all_results": {
+    "logistic_regression": {
+      "accuracy": 0.965,
+      "precision": 1.0,
+      "recall": 0.964765100671141,
+      "f1": 0.982066609735269,
+      "confusion_matrix": [
+        [
+          4,
+          0
+        ],
+        [
+          21,
+          575
+        ]
+      ],
+      "roc_auc": 0.9903523489932886
+    },
+    "random_forest": {
+      "accuracy": 0.99,
+      "precision": 0.9933110367892977,
+      "recall": 0.9966442953020134,
+      "f1": 0.9949748743718593,
+      "confusion_matrix": [
+        [
+          0,
+          4
+        ],
+        [
+          2,
+          594
+        ]
+      ],
+      "roc_auc": 0.9591023489932886
+    },
+    "xgboost": {
+      "accuracy": 0.9933333333333333,
+      "precision": 0.9933333333333333,
+      "recall": 1.0,
+      "f1": 0.9966555183946488,
+      "confusion_matrix": [
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          596
+        ]
+      ],
+      "roc_auc": 0.9668624161073825
+    }
+  },
+  "dataset": "data\\raw\\smarttask_delivery_dataset.csv",
+  "dataset_type": "SYNTHETIC_DEV",
+  "samples": 3000,
+  "delivery_time_model_version": "1.0.0",
+  "delivery_time_best_algorithm": "xgboost",
+  "delivery_time_metrics": {
+    "mae": 6.316202459335327,
+    "rmse": 8.022703333874725,
+    "r2": 0.9600318874031719
+  },
+  "delivery_time_all_results": {
+    "linear_regression": {
+      "mae": 7.451442692369983,
+      "rmse": 9.431646888620547,
+      "r2": 0.9447608178667404
+    },
+    "random_forest": {
+      "mae": 7.142769742525412,
+      "rmse": 8.930015311350619,
+      "r2": 0.9504804623441369
+    },
+    "xgboost": {
+      "mae": 6.316202459335327,
+      "rmse": 8.022703333874725,
+      "r2": 0.9600318874031719
+    }
+  }
+}

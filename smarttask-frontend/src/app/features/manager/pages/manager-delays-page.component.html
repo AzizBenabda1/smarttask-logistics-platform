@@ -1,0 +1,20 @@
+<div class="page">
+  <div class="header"><div><h1>Retards</h1><p>Tâches en retard et niveau de risque</p></div></div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Tâche</th><th>Chauffeur</th><th>Deadline</th><th>Retard (min)</th><th>Risque</th><th>Statut</th><th>Priorité</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let d of delays">
+          <td>{{ d.title }}</td>
+          <td>{{ d.driverName || '—' }}</td>
+          <td>{{ d.deadline | date:'short' }}</td>
+          <td>{{ d.delayMinutes }}</td>
+          <td><span class="badge" [ngClass]="d.riskLevel">{{ d.riskLevel }}</span></td>
+          <td><span class="badge" [ngClass]="d.status">{{ d.status }}</span></td>
+          <td><span class="badge" [ngClass]="d.priority">{{ d.priority }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!delays.length" class="empty">Aucun retard détecté 🎉</div>
+  </div>
+</div>

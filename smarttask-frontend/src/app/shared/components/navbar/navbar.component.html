@@ -1,0 +1,17 @@
+<nav class="navbar" *ngIf="auth.getCurrentUser() as user">
+  <div class="brand">
+    <a [routerLink]="dashboardLink()">SmartLogix</a>
+  </div>
+  <ul class="nav-links">
+    <li><a [routerLink]="dashboardLink()" routerLinkActive="active">Dashboard</a></li>
+    <li><a routerLink="/profile" routerLinkActive="active">Profil</a></li>
+    <li *ngIf="user.role === Role.ADMIN">
+      <a routerLink="/admin/users" routerLinkActive="active">Utilisateurs</a>
+    </li>
+  </ul>
+  <div class="user-info">
+    <span class="badge">{{ user.role }}</span>
+    <span>{{ user.firstName }} {{ user.lastName }}</span>
+    <button class="btn btn-outline" (click)="logout()">Déconnexion</button>
+  </div>
+</nav>

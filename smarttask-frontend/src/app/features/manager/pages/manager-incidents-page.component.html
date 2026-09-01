@@ -1,0 +1,49 @@
+<div class="page">
+  <div class="header">
+    <div><h1>Incidents</h1><p>Gestion et résolution des signalements</p></div>
+  </div>
+
+  <div class="filters">
+    <select [(ngModel)]="filterStatus" (change)="page=0; load()">
+      <option value="">Tous statuts</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="empty">Chargement...</div>
+  <div class="card table-wrap" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Type</th><th>Description</th><th>Priorité</th><th>Statut</th><th>Signalé par</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of incidents">
+          <td>#{{ i.id }}</td>
+          <td>{{ i.type }}</td>
+          <td>{{ i.description }}</td>
+          <td><span class="badge" [ngClass]="i.priority">{{ i.priority }}</span></td>
+          <td><span class="badge" [ngClass]="i.status">{{ i.status }}</span></td>
+          <td>{{ i.reporterName }}</td>
+          <td>
+            <button class="btn-sm" *ngIf="i.status==='OPEN'" (click)="resolve(i,'IN_PROGRESS')">Prendre en charge</button>
+            <button class="btn-sm" *ngIf="i.status!=='RESOLVED' && i.status!=='CLOSED'" (click)="resolve(i,'RESOLVED')">Résoudre</button>
+            <button class="btn-sm" *ngIf="i.status==='RESOLVED'" (click)="resolve(i,'CLOSED')">Clôturer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!incidents.length" class="empty">Aucun incident</div>
+    <div class="pager" *ngIf="totalPages > 1">
+      <button class="btn-sm" (click)="prev()" [disabled]="page===0">Précédent</button>
+      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
+      <button class="btn-sm" (click)="next()" [disabled]="page >= totalPages - 1">Suivant</button>
+    </div>
+  </div>
+</div>
+<style>
+.pager { display:flex; gap:1rem; align-items:center; justify-content:center; padding:1rem; }
+.badge.OPEN { background:#fee2e2; color:#b91c1c; }
+.badge.IN_PROGRESS { background:#dbeafe; color:#1d4ed8; }
+.badge.RESOLVED { background:#dcfce7; color:#15803d; }
+.badge.CLOSED { background:#f1f5f9; color:#475569; }
+</style>

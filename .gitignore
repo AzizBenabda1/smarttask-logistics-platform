@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Build outputs
+dist/
+build/
+target/
+*.egg-info/
+.angular/cache/
+
+# Environment & secrets
+.env
+.env.local
+*.pem
+*.key
+credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & cache
+*.log
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ML artifacts (regenerate locally)
+smarttask-ai/data/processed/*
+!smarttask-ai/data/processed/.gitkeep
+smarttask-ai/data/raw/*
+!smarttask-ai/data/raw/.gitkeep
+*.pkl
+
+# Java
+*.class
+*.jar
+!**/gradle-wrapper.jar

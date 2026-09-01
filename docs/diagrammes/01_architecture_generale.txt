@@ -1,0 +1,4 @@
+Utilisateur -> Angular 4200 -> Spring Boot 9090 -> PostgreSQL 5432
+                                      |
+                                      v
+                              Python FastAPI 8000
