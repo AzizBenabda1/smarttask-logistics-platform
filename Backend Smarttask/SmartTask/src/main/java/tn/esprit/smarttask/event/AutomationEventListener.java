@@ -18,11 +18,11 @@ public class AutomationEventListener {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void onOrderCreated(OrderCreatedEvent event) {
+    public void onOrderVerified(OrderVerifiedEvent event) {
         try {
             Priority priority = Priority.valueOf(event.getPriority());
             if (expressChain.shouldAutoTrigger(priority)) {
-                log.info("Express Autonomous chain for order #{}", event.getOrderId());
+                log.info("Express Autonomous chain for order #{} (after operator validation)", event.getOrderId());
                 expressChain.execute(event.getOrderId());
             }
         } catch (Exception ex) {

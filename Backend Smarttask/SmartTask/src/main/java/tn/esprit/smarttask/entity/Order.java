@@ -28,7 +28,7 @@ public class Order {
     private User client;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "operator_id", nullable = false)
+    @JoinColumn(name = "operator_id")
     private User operator;
 
     @ManyToOne(fetch = FetchType.LAZY)

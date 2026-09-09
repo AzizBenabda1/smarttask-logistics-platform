@@ -30,6 +30,7 @@ export class ClientLayoutComponent {
   nav = [
     { path: 'dashboard', label: 'Dashboard', abbr: 'DB' },
     { path: 'orders', label: 'Mes commandes', abbr: 'CM' },
+    { path: 'orders/create', label: 'Nouvelle commande', abbr: 'NC' },
     { path: 'notifications', label: 'Notifications', abbr: 'NT' },
     { path: 'reviews', label: 'Mes évaluations', abbr: 'EV' },
     { path: 'incidents', label: 'Signaler problème', abbr: 'SG' },

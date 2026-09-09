@@ -61,12 +61,6 @@ public class OperatorController {
         return ResponseEntity.ok(operatorService.getOrder(id));
     }
 
-    @PostMapping("/orders")
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(operatorService.createOrder(request, SecurityUtils.getCurrentUser()));
-    }
-
     @PutMapping("/orders/{id}")
     public ResponseEntity<OrderResponse> updateOrder(@PathVariable Long id, @Valid @RequestBody OrderRequest request) {
         return ResponseEntity.ok(operatorService.updateOrder(id, request, SecurityUtils.getCurrentUser()));
@@ -77,14 +71,14 @@ public class OperatorController {
         return ResponseEntity.ok(operatorService.verifyOrder(id, SecurityUtils.getCurrentUser()));
     }
 
+    @PostMapping("/orders/{id}/cancel")
+    public ResponseEntity<OrderResponse> cancelOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(operatorService.cancelOrder(id, SecurityUtils.getCurrentUser()));
+    }
+
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskResponse>> getTasks() {
         return ResponseEntity.ok(operatorService.getTasks());
-    }
-
-    @PostMapping("/tasks/{orderId}/prepare")
-    public ResponseEntity<TaskResponse> prepareTask(@PathVariable Long orderId) {
-        return ResponseEntity.ok(operatorService.prepareTask(orderId, SecurityUtils.getCurrentUser()));
     }
 
     @GetMapping("/clients")

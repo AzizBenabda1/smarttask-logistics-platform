@@ -19,4 +19,5 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     long countByStatus(OrderStatus status);
     long countByClient_Id(Long clientId);
     Page<Order> findByClientIdOrderByCreatedAtDesc(Long clientId, Pageable pageable);
+    List<Order> findByStatusAndTaskIdIsNullOrderByCreatedAtDesc(OrderStatus status);
 }

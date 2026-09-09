@@ -14,6 +14,7 @@ import { Order } from '../../../core/models/role.models';
       <h1>Mes commandes</h1>
       <p class="subtitle">Suivez vos livraisons en temps réel</p>
     </div>
+    <a routerLink="/client/orders/create" class="btn btn-primary">Nouvelle commande</a>
   </div>
 
   <div class="list-cards">
@@ -32,7 +33,9 @@ import { Order } from '../../../core/models/role.models';
             <a *ngIf="o.taskId" [routerLink]="['/client/delivery', o.taskId]" class="btn-sm">Suivre</a>
             <a *ngIf="needsConfirm(o)" [routerLink]="['/client/delivery', o.taskId]" class="btn-sm btn-confirm">Confirmer réception</a>
             <a [routerLink]="['/client/orders', o.id]" class="btn-sm">Détail</a>
-            <span *ngIf="!o.taskId" class="text-muted">En préparation</span>
+            <span *ngIf="!o.taskId && o.status === 'PENDING'" class="text-muted">En attente validation operateur</span>
+            <span *ngIf="!o.taskId && o.status === 'VERIFIED'" class="text-muted">Validee — preparation manager</span>
+            <span *ngIf="!o.taskId && o.status !== 'PENDING' && o.status !== 'VERIFIED'" class="text-muted">En preparation</span>
           </div>
         </div>
       </div>

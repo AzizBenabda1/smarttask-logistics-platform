@@ -26,11 +26,10 @@ export class OperatorService {
   }
   getPendingOrders(): Observable<Order[]> { return this.http.get<Order[]>(`${this.base}/orders/pending`); }
   getOrder(id: number): Observable<Order> { return this.http.get<Order>(`${this.base}/orders/${id}`); }
-  createOrder(data: OrderRequest): Observable<Order> { return this.http.post<Order>(`${this.base}/orders`, data); }
   updateOrder(id: number, data: OrderRequest): Observable<Order> { return this.http.put<Order>(`${this.base}/orders/${id}`, data); }
   verifyOrder(id: number): Observable<Order> { return this.http.post<Order>(`${this.base}/orders/${id}/verify`, {}); }
+  cancelOrder(id: number): Observable<Order> { return this.http.post<Order>(`${this.base}/orders/${id}/cancel`, {}); }
   getTasks(): Observable<Task[]> { return this.http.get<Task[]>(`${this.base}/tasks`); }
-  prepareTask(orderId: number): Observable<Task> { return this.http.post<Task>(`${this.base}/tasks/${orderId}/prepare`, {}); }
   getClients(): Observable<{id:number;firstName:string;lastName:string;email:string}[]> {
     return this.http.get<{id:number;firstName:string;lastName:string;email:string}[]>(`${this.base}/clients`);
   }

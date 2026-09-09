@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.smarttask.dto.response.*;
 import tn.esprit.smarttask.entity.*;
+import tn.esprit.smarttask.exception.InvalidStateTransitionException;
+import tn.esprit.smarttask.exception.OrderNotFoundException;
 import tn.esprit.smarttask.exception.UserNotFoundException;
+import tn.esprit.smarttask.mapper.OrderMapper;
 import tn.esprit.smarttask.mapper.TaskMapper;
 import tn.esprit.smarttask.repository.*;
 import tn.esprit.smarttask.service.ai.AIRecommendationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +27,15 @@ import java.util.List;
 public class ManagerService {
 
     private final TaskRepository taskRepository;
+    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final DriverProfileRepository driverProfileRepository;
     private final NotificationRepository notificationRepository;
     private final IncidentRepository incidentRepository;
+    private final TaskHistoryRepository taskHistoryRepository;
     private final TaskMapper taskMapper;
+    private final OrderMapper orderMapper;
+    private final NotificationHelper notificationHelper;
     private final AIRecommendationService aiRecommendationService;
 
     @Transactional(readOnly = true)
@@ -183,6 +191,56 @@ public class ManagerService {
                     .build());
         }
         return points;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getVerifiedOrdersPendingPrepare() {
+        return orderRepository.findByStatusAndTaskIdIsNullOrderByCreatedAtDesc(OrderStatus.VERIFIED).stream()
+                .map(orderMapper::toResponse).toList();
+    }
+
+    @Transactional
+    public TaskResponse prepareTask(Long orderId, User manager) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
+        if (order.getStatus() != OrderStatus.VERIFIED && order.getStatus() != OrderStatus.PREPARING) {
+            throw new InvalidStateTransitionException("Order must be verified before preparation");
+        }
+        if (order.getTaskId() != null) {
+            throw new InvalidStateTransitionException("Task already created for this order");
+        }
+
+        LocalDateTime deadline = order.getScheduledDate() != null
+                ? order.getScheduledDate().atTime(order.getScheduledTime() != null ? order.getScheduledTime() : LocalTime.of(18, 0))
+                : LocalDateTime.now().plusDays(1);
+
+        Task task = Task.builder()
+                .title("Livraison commande #" + order.getId())
+                .description(order.getProducts())
+                .client(order.getClient())
+                .createdBy(manager)
+                .order(order)
+                .deliveryAddress(order.getDeliveryAddress())
+                .scheduledDate(order.getScheduledDate())
+                .scheduledTime(order.getScheduledTime())
+                .deadline(deadline)
+                .priority(order.getPriority())
+                .status(TaskStatus.PREPARED)
+                .instructions(order.getInstructions())
+                .weightQuantity(order.getQuantity() + " unité(s)")
+                .build();
+        Task saved = taskRepository.save(task);
+        order.setTaskId(saved.getId());
+        order.setStatus(OrderStatus.READY);
+        orderRepository.save(order);
+
+        taskHistoryRepository.save(TaskHistory.builder()
+                .task(saved).action("PREPARED").newStatus(TaskStatus.PREPARED)
+                .performedBy(manager).notes("Task prepared from order #" + orderId).build());
+
+        notificationHelper.notifyUser(order.getClient(), NotificationType.NEW_TASK, "Commande prête",
+                "Votre commande #" + orderId + " est prête pour affectation chauffeur", saved, Priority.MEDIUM);
+        return taskMapper.toResponse(saved);
     }
 
     @Transactional(readOnly = true)

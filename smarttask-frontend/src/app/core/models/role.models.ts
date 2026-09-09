@@ -27,7 +27,8 @@ export interface Order {
 }
 
 export interface OrderRequest {
-  clientId: number;
+  /** Required when operator updates; omitted when client creates own order */
+  clientId?: number;
   productTypeId?: number;
   customProductType?: string;
   products?: string;

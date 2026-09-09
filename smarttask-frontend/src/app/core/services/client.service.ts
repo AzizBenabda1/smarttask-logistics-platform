@@ -4,8 +4,9 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
 import {
-  ClientDashboard, DeliveryTracking, Incident, IncidentRequest, NotificationItem, Order, Review, ReviewRequest, Task, TaskLiveUpdate
+  ClientDashboard, DeliveryTracking, Incident, IncidentRequest, NotificationItem, Order, OrderRequest, Review, ReviewRequest, Task, TaskLiveUpdate
 } from '../models/role.models';
+import { DeliverySuccessPrediction } from '../models/ai.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService {
@@ -14,6 +15,10 @@ export class ClientService {
 
   getDashboard(): Observable<ClientDashboard> { return this.http.get<ClientDashboard>(`${this.base}/dashboard`); }
   getOrders(): Observable<Order[]> { return this.http.get<Order[]>(`${this.base}/orders`); }
+  createOrder(data: OrderRequest): Observable<Order> { return this.http.post<Order>(`${this.base}/orders`, data); }
+  previewDeliverySuccess(data: OrderRequest): Observable<DeliverySuccessPrediction> {
+    return this.http.post<DeliverySuccessPrediction>(`${this.base}/ai/delivery-success/preview`, data);
+  }
   getOrder(id: number): Observable<Order> { return this.http.get<Order>(`${this.base}/orders/${id}`); }
   getDelivery(taskId: number): Observable<DeliveryTracking> { return this.http.get<DeliveryTracking>(`${this.base}/deliveries/${taskId}`); }
 

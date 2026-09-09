@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tn.esprit.smarttask.dto.request.DeliveryConfirmRequest;
 import tn.esprit.smarttask.dto.request.IncidentRequest;
+import tn.esprit.smarttask.dto.request.OrderRequest;
 import tn.esprit.smarttask.dto.request.ReviewRequest;
 import tn.esprit.smarttask.dto.response.*;
 import tn.esprit.smarttask.security.SecurityUtils;
+import tn.esprit.smarttask.service.AIService;
 import tn.esprit.smarttask.service.ClientService;
 import tn.esprit.smarttask.service.RealTimeEventService;
 
@@ -30,6 +32,7 @@ public class ClientController {
 
     private final ClientService clientService;
     private final RealTimeEventService realTimeEventService;
+    private final AIService aiService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<ClientDashboardResponse> dashboard() {
@@ -39,6 +42,18 @@ public class ClientController {
     @GetMapping("/orders")
     public ResponseEntity<List<OrderResponse>> getOrders() {
         return ResponseEntity.ok(clientService.getOrders(SecurityUtils.getCurrentUser()));
+    }
+
+    @PostMapping("/orders")
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(clientService.createOrder(request, SecurityUtils.getCurrentUser()));
+    }
+
+    @PostMapping("/ai/delivery-success/preview")
+    public ResponseEntity<tn.esprit.smarttask.dto.ai.AIDeliverySuccessPredictionResponse> previewDeliverySuccess(
+            @Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.ok(aiService.previewDeliverySuccess(request));
     }
 
     @GetMapping("/orders/{id}")

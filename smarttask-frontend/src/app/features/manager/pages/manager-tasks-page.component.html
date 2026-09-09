@@ -13,6 +13,21 @@
     </div>
   </div>
 
+  <div class="card" *ngIf="verifiedOrders.length" style="margin-bottom:1.5rem">
+    <h2 style="margin:0 0 1rem">Commandes validees a preparer</h2>
+    <div class="list-cards">
+      <div class="list-card" *ngFor="let o of verifiedOrders">
+        <div class="list-card-row">
+          <div class="list-card-main">
+            <h3 class="list-card-title">Commande #{{ o.id }} — {{ o.clientName }}</h3>
+            <p class="list-card-meta">{{ o.products }} · {{ o.deliveryAddress }}</p>
+          </div>
+          <button class="btn-sm btn-primary" (click)="prepareOrder(o)">Preparer tache livraison</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="filter-bar">
     <div class="form-field">
       <label>Recherche</label>

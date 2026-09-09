@@ -18,7 +18,6 @@ import { ToastService } from '../../../shared/services/toast.service';
     </div>
     <div class="page-actions">
       <app-view-toggle [mode]="viewMode" (modeChange)="viewMode = $event"></app-view-toggle>
-      <a routerLink="/operator/orders/create" class="btn btn-primary">Nouvelle commande</a>
     </div>
   </div>
 
@@ -50,12 +49,12 @@ import { ToastService } from '../../../shared/services/toast.service';
       </div>
       <div class="tile-footer">
         <button class="btn-sm" *ngIf="o.status==='PENDING'" (click)="verify(o)">Valider</button>
-        <button class="btn-sm btn-ai" *ngIf="o.status==='VERIFIED'" (click)="prepare(o)">Preparer</button>
+        <button class="btn-sm btn-danger" *ngIf="o.status==='PENDING'" (click)="cancel(o)">Annuler</button>
       </div>
     </div>
     <div class="empty-state" *ngIf="!orders.length" style="grid-column:1/-1">
       <p class="empty-title">Aucune commande</p>
-      <p>Creez une nouvelle commande pour commencer.</p>
+      <p>Les commandes clients en attente apparaitront ici.</p>
     </div>
   </div>
 
@@ -72,7 +71,7 @@ import { ToastService } from '../../../shared/services/toast.service';
         <div class="list-card-actions">
           <span class="meta-value" style="font-weight:700">{{ o.amount }} DT</span>
           <button class="btn-sm" *ngIf="o.status==='PENDING'" (click)="verify(o)">Valider</button>
-          <button class="btn-sm btn-ai" *ngIf="o.status==='VERIFIED'" (click)="prepare(o)">Preparer</button>
+          <button class="btn-sm btn-danger" *ngIf="o.status==='PENDING'" (click)="cancel(o)">Annuler</button>
         </div>
       </div>
     </div>
@@ -114,15 +113,16 @@ export class OperatorOrdersPageComponent implements OnInit {
 
   verify(o: Order): void {
     this.svc.verifyOrder(o.id).subscribe({
-      next: () => { this.toast.success(`Commande #${o.id} verifiee`); this.load(); },
+      next: () => { this.toast.success(`Commande #${o.id} validee — transmise au manager`); this.load(); },
       error: e => this.toast.error(e.error?.message || 'Erreur validation')
     });
   }
 
-  prepare(o: Order): void {
-    this.svc.prepareTask(o.id).subscribe({
-      next: () => { this.toast.success(`Tache preparee pour commande #${o.id}`); this.load(); },
-      error: e => this.toast.error(e.error?.message || 'Erreur preparation')
+  cancel(o: Order): void {
+    if (!confirm(`Annuler la commande #${o.id} ?`)) return;
+    this.svc.cancelOrder(o.id).subscribe({
+      next: () => { this.toast.success(`Commande #${o.id} annulee`); this.load(); },
+      error: e => this.toast.error(e.error?.message || 'Erreur annulation')
     });
   }
 }

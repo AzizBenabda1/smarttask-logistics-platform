@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Setter
 public class OrderRequest {
 
-    @NotNull
+    /** Required when operator updates; ignored when client creates own order */
     private Long clientId;
 
     /** Type choisi dans la liste (null si « Autre ») */

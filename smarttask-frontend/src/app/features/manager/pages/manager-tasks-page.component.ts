@@ -7,6 +7,7 @@ import { AiService } from '../../../core/services/ai.service';
 import { DriverRecommendationAI, DeliverySuccessPrediction, TaskAIAnalysis } from '../../../core/models/ai.models';
 import { ToastService } from '../../../shared/services/toast.service';
 import { Client, Driver, Priority, Task, TaskRequest, TaskStatus } from '../../../core/models/manager.models';
+import { Order } from '../../../core/models/role.models';
 
 @Component({
   selector: 'app-manager-tasks-page',
@@ -16,6 +17,7 @@ import { Client, Driver, Priority, Task, TaskRequest, TaskStatus } from '../../.
 })
 export class ManagerTasksPageComponent implements OnInit {
   tasks: Task[] = [];
+  verifiedOrders: Order[] = [];
   clients: Client[] = [];
   drivers: Driver[] = [];
   statuses = Object.values(['PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'DELAYED'] as TaskStatus[]);
@@ -50,7 +52,23 @@ export class ManagerTasksPageComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadRefs();
+    this.loadVerifiedOrders();
     this.loadTasks();
+  }
+
+  loadVerifiedOrders(): void {
+    this.managerService.getVerifiedOrdersPendingPrepare().subscribe(o => this.verifiedOrders = o);
+  }
+
+  prepareOrder(o: Order): void {
+    this.managerService.prepareOrder(o.id).subscribe({
+      next: () => {
+        this.toast.success(`Tache preparee pour commande #${o.id}`);
+        this.loadVerifiedOrders();
+        this.loadTasks();
+      },
+      error: e => this.toast.error(e.error?.message || 'Erreur preparation')
+    });
   }
 
   initForm(task?: Task): void {

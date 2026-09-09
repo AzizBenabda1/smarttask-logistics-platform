@@ -13,8 +13,10 @@ import {
   ManagerDashboard,
   NotificationItem,
   Operator,
-  PageResponse
+  PageResponse,
+  Task
 } from '../models/manager.models';
+import { Order } from '../models/role.models';
 
 @Injectable({ providedIn: 'root' })
 export class ManagerService {
@@ -78,5 +80,13 @@ export class ManagerService {
 
   exportAnalytics(): Observable<Blob> {
     return this.http.get(`${this.base}/analytics/export`, { responseType: 'blob' });
+  }
+
+  getVerifiedOrdersPendingPrepare(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.base}/orders/verified`);
+  }
+
+  prepareOrder(orderId: number): Observable<Task> {
+    return this.http.post<Task>(`${this.base}/orders/${orderId}/prepare`, {});
   }
 }

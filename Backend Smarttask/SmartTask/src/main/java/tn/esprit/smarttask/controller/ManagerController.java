@@ -108,6 +108,16 @@ public class ManagerController {
         return ResponseEntity.ok(aiRecommendationService.recommendDriver(task));
     }
 
+    @GetMapping("/orders/verified")
+    public ResponseEntity<List<OrderResponse>> getVerifiedOrdersPendingPrepare() {
+        return ResponseEntity.ok(managerService.getVerifiedOrdersPendingPrepare());
+    }
+
+    @PostMapping("/orders/{orderId}/prepare")
+    public ResponseEntity<TaskResponse> prepareTask(@PathVariable Long orderId) {
+        return ResponseEntity.ok(managerService.prepareTask(orderId, SecurityUtils.getCurrentUser()));
+    }
+
     @GetMapping("/incidents")
     public ResponseEntity<PageResponse<IncidentResponse>> getIncidents(
             @RequestParam(required = false) IncidentStatus status,

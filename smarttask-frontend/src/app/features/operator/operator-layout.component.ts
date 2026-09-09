@@ -30,7 +30,6 @@ export class OperatorLayoutComponent {
   nav = [
     { path: 'dashboard', label: 'Dashboard', abbr: 'DB' },
     { path: 'orders', label: 'Commandes', abbr: 'CM' },
-    { path: 'orders/create', label: 'Nouvelle commande', abbr: 'NC' },
     { path: 'orders/pending', label: 'Vérification', abbr: 'VR' },
     { path: 'tasks', label: 'Tâches', abbr: 'TK' },
     { path: 'tasks/tracking', label: 'Suivi livraisons', abbr: 'SL' },

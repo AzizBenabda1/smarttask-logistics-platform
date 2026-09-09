@@ -15,15 +15,16 @@ import { OperatorDashboard } from '../../../core/models/role.models';
       <p class="subtitle">Operations et commandes du jour</p>
     </div>
     <div class="page-actions">
-      <a routerLink="/operator/orders/create" class="btn btn-primary">Nouvelle commande</a>
+      <a routerLink="/operator/orders/pending" class="btn btn-primary">Verifier commandes</a>
     </div>
   </div>
 
   <div class="feature-banner">
-    <p class="feature-banner-title">Nouveau — Score reussite livraison IA</p>
+    <p class="feature-banner-title">Flux commande</p>
     <div class="feature-banner-tags">
-      <span class="feature-tag">Delivery Success AI</span>
-      <span class="feature-tag">Analyse avant creation</span>
+      <span class="feature-tag">Client cree</span>
+      <span class="feature-tag">Operateur valide ou annule</span>
+      <span class="feature-tag">Manager prepare et affecte</span>
     </div>
   </div>
 
@@ -69,17 +70,17 @@ import { OperatorDashboard } from '../../../core/models/role.models';
       <div class="card-header"><h2>Actions rapides</h2></div>
       <div class="card-body">
         <div class="quick-links">
-          <a routerLink="/operator/orders/create">
-            Creer commande
-            <span>Avec analyse IA reussite</span>
-          </a>
           <a routerLink="/operator/orders/pending">
-            En attente
-            <span>{{ x.pendingOrders }} commande(s)</span>
+            Verifier commandes
+            <span>{{ x.pendingOrders }} en attente</span>
+          </a>
+          <a routerLink="/operator/orders">
+            Toutes les commandes
+            <span>Suivi complet</span>
           </a>
           <a routerLink="/operator/tasks">
             Taches
-            <span>Preparation</span>
+            <span>Suivi livraisons</span>
           </a>
           <a routerLink="/operator/incidents">
             Incidents

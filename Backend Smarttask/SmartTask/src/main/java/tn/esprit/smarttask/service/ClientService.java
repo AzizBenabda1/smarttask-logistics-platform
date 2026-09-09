@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.esprit.smarttask.dto.request.DeliveryConfirmRequest;
+import tn.esprit.smarttask.dto.request.OrderRequest;
 import tn.esprit.smarttask.dto.request.IncidentRequest;
 import tn.esprit.smarttask.dto.request.ReviewRequest;
 import tn.esprit.smarttask.dto.response.*;
@@ -30,6 +31,31 @@ public class ClientService {
     private final TaskMapper taskMapper;
     private final NotificationHelper notificationHelper;
     private final RealTimeEventService realTimeEventService;
+    private final OrderProductHelper orderProductHelper;
+
+    @Transactional
+    public OrderResponse createOrder(OrderRequest request, User client) {
+        OrderProductHelper.ResolvedProduct resolved = orderProductHelper.resolveProduct(request);
+        Order order = Order.builder()
+                .client(client)
+                .operator(null)
+                .productType(resolved.productType())
+                .products(resolved.label())
+                .quantity(request.getQuantity())
+                .amount(request.getAmount())
+                .phone(request.getPhone() != null ? request.getPhone() : client.getPhone())
+                .deliveryAddress(request.getDeliveryAddress())
+                .scheduledDate(request.getScheduledDate())
+                .scheduledTime(request.getScheduledTime())
+                .instructions(request.getInstructions())
+                .priority(request.getPriority())
+                .status(OrderStatus.PENDING)
+                .build();
+        Order saved = orderRepository.save(order);
+        notificationHelper.notifyOperators(NotificationType.NEW_TASK, "Nouvelle commande client",
+                "Commande #" + saved.getId() + " en attente de validation — " + saved.getProducts(), null);
+        return orderMapper.toResponse(saved);
+    }
 
     @Transactional(readOnly = true)
     public void assertTaskAccess(Long taskId, User client) {
